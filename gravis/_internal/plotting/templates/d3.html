@@ -232,7 +232,8 @@
     /* Graph */
     #§RANDOM_ID§-tooltip-div {
       font-size: 10px;
-      font-family: "Lucida Console", Monaco, monospace;
+      /*font-family: "Lucida Console", Monaco, monospace;*/
+      font-family: Verdana, sans-serif;
       z-index: 42001;
       opacity: 0;
       visibility: hidden;
@@ -3124,6 +3125,32 @@
               // 1) Remove existing elements
               ui.composites.graph.removeEdges();
               svg.select("#§RANDOM_ID§-arrow-marker").remove();
+              
+              //function added to make arrow marker color the same as the edge color
+              const make_arrow = (color="red")=>{
+                var randomNumberString = (Math.floor(Math.random() * 900000) + 100000).toString(); //create new id (6 digit number)
+                var concatenatedString = randomNumberString + "-arrow-marker"; //set marker id
+                var returnUrlString = "url(#" + concatenatedString + ")"; //set return url string
+                
+                const arrowSizeDouble = arrowSize * 2.0,
+                  arrowSizeHalf = arrowSize / 2.0;
+
+                const marker = svg.append("marker")
+                  .attr("id", concatenatedString)
+                  .attr("markerUnits", "userSpaceOnUse")
+                  .attr("viewBox", "0 0 " + arrowSizeDouble + " " + arrowSizeDouble)
+                  .attr("refX", 0)
+                  .attr("refY", arrowSizeHalf)
+                  .attr("orient", "auto")
+                  .attr("markerWidth", arrowSize)
+                  .attr("markerHeight", arrowSize)
+                  .attr("xoverflow", "visible")
+                  .append("path")
+                    .attr("d", "M 0 0 L " + arrowSizeDouble + " " + arrowSizeHalf + " L 0 " + arrowSize + " z")
+                    .attr("fill", color)
+
+                return returnUrlString
+              }
               // 2) Create new elements
               // - Paths
               state.currentGraphParts.edgePaths = edgeGroups.append("path")
@@ -3136,7 +3163,7 @@
               if(data.general.directed){
                 const arrowSizeDouble = arrowSize * 2.0,
                   arrowSizeHalf = arrowSize / 2.0;
-                const marker = svg.append("marker")
+                const marker = svg.append("marker") //this is unused
                   .attr("id", "§RANDOM_ID§-arrow-marker")
                   .attr("markerUnits", "userSpaceOnUse")
                   .attr("viewBox", "0 0 " + arrowSizeDouble + " " + arrowSizeDouble)
@@ -3148,9 +3175,10 @@
                   .attr("xoverflow", "visible")
                   .append("path")
                     .attr("d", "M 0 0 L " + arrowSizeDouble + " " + arrowSizeHalf + " L 0 " + arrowSize + " z")
-                    .attr("fill", state.shownData.general.arrow_color)
+                    .attr("fill", state.currentGraphParts.edgePaths._groups[0][2].attributes[1].value)
                 state.currentGraphParts.edgePaths
-                  .attr("marker-end", "url(#§RANDOM_ID§-arrow-marker)");
+                  //.attr("marker-end", "url(#§RANDOM_ID§-arrow-marker)");
+                  .attr("marker-end", d => make_arrow(d.color)); //set marker color to the same as edge color
               }
               // - Edge hover behavior
               if(state.parsedData.general.contains_edge_hover){

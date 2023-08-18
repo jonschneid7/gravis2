@@ -1,6 +1,6 @@
-gravis
+gravis2
 ======
-
+This is a fork of the gravis package with some stylistic modifications.
 +----------------------+-----------------------------------------------------------------------------------+
 | Documentation        | `Website <https://robert-haas.github.io/gravis-docs/>`_                           |
 +----------------------+-----------------------------------------------------------------------------------+
